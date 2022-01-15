@@ -4,6 +4,8 @@ import * as React from 'react';
 import { View, Text, Button, NativeModules, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Mbutton from './components/Button';
+import setPage from './pages/set';
 
 function custom() {
   NativeModules.ToastExample.show(NativeModules.WallpaperModule.showMyName() + '??', NativeModules.ToastExample.SHORT)
@@ -13,8 +15,15 @@ function HomeScreen({navigation}) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ImageBackground source={{uri:image}} style={{width: '100%', height:'100%' }}>
-        <Text>图片背景框</Text>
+        <View style={{width: 200}}>
+        <Text style={{color: '#fff'}} onPress={() => navigation.navigate('Details')}>图片背景框</Text>
+        </View>
+        {/* <Button title='这是一个原生按钮'/> */}
       </ImageBackground>
+      <View style={{position:'absolute',bottom:20, overflow: 'hidden'}}>
+      <Mbutton title="+" style={{width: 40, height: 40, borderRadius: 20}} onPress={() => navigation.navigate('setPage')}></Mbutton>
+      {/* <Button title='+'/> */}
+      </View>
     </View>
   );
 }
@@ -22,7 +31,7 @@ function HomeScreen({navigation}) {
 function Details() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>这是Details页面{NativeModules.WallpaperModule.showMyName()}22</Text>
+      <Text>这是Details页面</Text>
     </View>
   );
 }
@@ -32,9 +41,12 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} options={{
+          headerShown: false
+        }} />
         <Stack.Screen name="Details" component={Details} />
+        <Stack.Screen name="setPage" component={setPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );
