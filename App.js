@@ -1,27 +1,39 @@
 // navigation 路由使用
 
-import * as React from 'react';
+import React, {useState} from 'react';
 import { View, Text, Button, NativeModules, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import Mbutton from './components/Button';
 import setPage from './pages/set';
 
 function custom() {
   NativeModules.ToastExample.show(NativeModules.WallpaperModule.showMyName() + '??', NativeModules.ToastExample.SHORT)
 }
+
 const image = `data:image/png;base64,${NativeModules.WallpaperModule.showMyName()}`
 function HomeScreen({navigation}) {
+  let [count, setCount] = useState(0)
+  function open () {
+    //打开系统相册
+    launchImageLibrary({}, (response)  => {
+    //响应结果处理参考上面样例
+    console.log(response);
+    setCount(response)
+    NativeModules.ToastExample.show(JSON.stringify(response), 999)
+  });
+}
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <ImageBackground source={{uri:image}} style={{width: '100%', height:'100%' }}>
+      <ImageBackground source={{uri: count.assets && count.assets[0].uri || image}} style={{width: '100%', height:'100%' }}>
         <View style={{width: 200}}>
-        <Text style={{color: '#fff'}} onPress={() => navigation.navigate('Details')}>图片背景框</Text>
+        <Text style={{color: '#fff'}} onPress={() => navigation.navigate('Details')}>{count.assets && count.assets.length}</Text>
         </View>
         {/* <Button title='这是一个原生按钮'/> */}
       </ImageBackground>
       <View style={{position:'absolute',bottom:20, overflow: 'hidden'}}>
-      <Mbutton title="+" style={{width: 40, height: 40, borderRadius: 20}} onPress={() => navigation.navigate('setPage')}></Mbutton>
+      <Mbutton title="+" style={{width: 40, height: 40, borderRadius: 20}} onPress={() => open()}></Mbutton>
       {/* <Button title='+'/> */}
       </View>
     </View>
