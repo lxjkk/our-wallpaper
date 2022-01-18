@@ -9,10 +9,10 @@ import Mbutton from './components/Button';
 import setPage from './pages/set';
 
 function custom() {
-  NativeModules.ToastExample.show(NativeModules.WallpaperModule.showMyName() + '??', NativeModules.ToastExample.SHORT)
+  NativeModules.ToastExample.show(NativeModules.WallpaperModule.getHomeWallpaper() + '??', NativeModules.ToastExample.SHORT)
 }
 
-const image = `data:image/png;base64,${NativeModules.WallpaperModule.showMyName()}`
+const image = `data:image/png;base64,${NativeModules.WallpaperModule.getHomeWallpaper()}`
 function HomeScreen({navigation}) {
   let [count, setCount] = useState(0)
   function open () {
@@ -20,7 +20,10 @@ function HomeScreen({navigation}) {
     launchImageLibrary({}, (response)  => {
     //响应结果处理参考上面样例
     console.log(response);
-    setCount(response)
+    if (!response.assets) return 
+    setCount(response.assets[0].uri)
+    const uri = response.assets[0].uri.replace('file://','')
+    NativeModules.WallpaperModule.setHomeWallpaper(uri)
     NativeModules.ToastExample.show(JSON.stringify(response), 999)
   });
 }
@@ -28,7 +31,7 @@ function HomeScreen({navigation}) {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <ImageBackground source={{uri: count.assets && count.assets[0].uri || image}} style={{width: '100%', height:'100%' }}>
         <View style={{width: 200}}>
-        <Text style={{color: '#fff'}} onPress={() => navigation.navigate('Details')}>{count.assets && count.assets.length}</Text>
+        <Text style={{color: '#fff'}} onPress={() => navigation.navigate('Details')}>{count}</Text>
         </View>
         {/* <Button title='这是一个原生按钮'/> */}
       </ImageBackground>

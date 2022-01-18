@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
+import android.graphics.BitmapFactory;
+import android.widget.Toast;
 
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -19,6 +21,7 @@ import com.facebook.react.bridge.ReactMethod;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.IOException;
 
 public class WallpaperModule extends ReactContextBaseJavaModule {
   private static ReactApplicationContext reactContext;
@@ -43,7 +46,7 @@ public class WallpaperModule extends ReactContextBaseJavaModule {
 //     return '123456';
 //   }
     @ReactMethod(isBlockingSynchronousMethod = true)
-    public String showMyName() {
+    public String getHomeWallpaper() {
       WallpaperManager wallpaperManager = WallpaperManager.getInstance(getReactApplicationContext());
       Drawable drawable = wallpaperManager.getDrawable();
       int width = drawable.getIntrinsicWidth();// 取drawable的长宽
@@ -58,5 +61,16 @@ public class WallpaperModule extends ReactContextBaseJavaModule {
       bitmap.compress(Bitmap.CompressFormat.JPEG, 40, bos);//参数100表示不压缩
       byte[] bytes=bos.toByteArray();
       return Base64.encodeToString(bytes, Base64.DEFAULT);
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
+    public void setHomeWallpaper(String Path) throws IOException {
+      WallpaperManager wallpaperManager = WallpaperManager.getInstance(getReactApplicationContext());
+      Bitmap bitmap = BitmapFactory.decodeFile(Path);
+      if (bitmap == null) {
+      Toast.makeText(getReactApplicationContext(), "图片不存在" + Path, Toast.LENGTH_SHORT).show();
+      return;
+      }
+      wallpaperManager.setBitmap(bitmap);
     }
 }
