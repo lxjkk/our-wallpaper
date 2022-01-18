@@ -68,7 +68,7 @@ public class WallpaperModule extends ReactContextBaseJavaModule {
       WallpaperManager wallpaperManager = WallpaperManager.getInstance(getReactApplicationContext());
       Bitmap bitmap = BitmapFactory.decodeFile(Path);
       if (bitmap == null) {
-      Toast.makeText(getReactApplicationContext(), "图片不存在" + Path, Toast.LENGTH_SHORT).show();
+      Toast.makeText(getReactApplicationContext(), "图片不存在", Toast.LENGTH_SHORT).show();
       return;
       }
       wallpaperManager.setBitmap(bitmap);
